@@ -1,0 +1,79 @@
+<launch>
+
+  <!--Global route to the bagfile to extract-->
+  <arg name="bag" default="/home/relead/GEODE/Inland_Waterways_Short_Alpha.bag"/>
+
+  <!--Folder to contain the outputs inside ~/.ros folder-->
+  <!-- <arg name="folder" default="result/"/> -->
+  <arg name="folder" default="$(eval arg('bag').replace('.bag', '/'))" />
+
+  <!--Topics-->
+  <!--Image compressed topic in the bag-->
+  <arg name="rgb_left_compressed_topic" default="/left_camera/compressed"/>
+  <!--Image compressed topic in the bag-->
+  <arg name="rgb_right_compressed_topic" default="/right_camera/compressed"/>
+  <!--Velodyne points topic in the bag-->
+  <arg name="velodyne_topic" default="/velodyne_points"/>
+  <!--IMU topic in the bag-->
+  <arg name="imu_topic" default="/imu/data"/>
+  <!-- lidar type -->
+  <arg name="lidar_type" default="Velodyne"/>
+
+
+  <!--Folder names-->
+  <!--Folder to save the images under the $folder directory-->
+  <arg name="rgb_left_folder" default="Camera/image_left/"/>
+  <!--Folder to save the images under the $folder directory-->
+  <arg name="rgb_right_folder" default="Camera/image_right/"/>
+  <!--Folder to save the pc data under the $folder directory-->
+  <arg name="velodyne_folder" default="LiDAR/bin/"/>
+  <!--Folder to save the imu data under the $folder directory-->
+  <arg name="imu_folder" default="IMU/"/>
+
+  <!--Time selection-->
+  <!--Start time for the extraction of data-->
+  <arg name="start_time" default="-1"/>
+  <!--End time for the extraction of data-->
+  <arg name="end_time" default="-1"/>
+
+  <!--Script to create the directories where the data is going to be saved. Its args are: -f $folder $subfolder1 $subfolder3 $subfolder2...-->
+  <node name="create_directories" type="createDirectories.sh" pkg="bag_extractor" 
+  args="-f  $(arg folder) 
+            $(arg rgb_left_folder) 
+            $(arg rgb_right_folder) 
+            $(arg velodyne_folder) 
+            $(arg imu_folder)" 
+            
+            output="screen"/>
+
+  <!--Nodes to extract data from topics.-->
+  <node name="rgb_left_extractor" type="Comimg2jpg" pkg="bag_extractor" output="screen"
+  args="_folder:=$(arg folder)$(arg rgb_left_folder)
+        _topic:=$(arg rgb_left_compressed_topic)
+        _bag:=$(arg bag)
+        _start_time:=$(arg start_time)
+        _end_time:=$(arg end_time)"/>
+
+  <node name="rgb_right_extractor" type="Comimg2jpg" pkg="bag_extractor" output="screen"
+  args="_folder:=$(arg folder)$(arg rgb_right_folder)
+        _topic:=$(arg rgb_right_compressed_topic)
+        _bag:=$(arg bag)
+        _start_time:=$(arg start_time)
+        _end_time:=$(arg end_time)"/>
+
+  <node name="velodyne_extractor" type="pc2bin" pkg="bag_extractor" output="screen"
+  args="_folder:=$(arg folder)$(arg velodyne_folder)
+        _topic:=$(arg velodyne_topic)
+        _bag:=$(arg bag)
+        _lidar_type:=$(arg lidar_type)
+        _start_time:=$(arg start_time)
+        _end_time:=$(arg end_time)"/>
+
+  <node name="imu_extractor" type="imu2txt" pkg="bag_extractor" output="screen"
+  args="_folder:=$(arg folder)$(arg imu_folder)
+        _topic:=$(arg imu_topic)
+        _bag:=$(arg bag)
+        _start_time:=$(arg start_time)
+        _end_time:=$(arg end_time)"/>
+
+</launch>

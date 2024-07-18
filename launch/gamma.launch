@@ -1,0 +1,91 @@
+<launch>
+
+  <!--Global route to the bagfile to extract-->
+  <arg name="bag" default="/home/relead/GEODE/Inland_Waterways_Short_Carol.bag"/>
+
+  <!--Folder to contain the outputs inside ~/.ros folder-->
+  <!-- <arg name="folder" default="result/"/> -->
+  <arg name="folder" default="$(eval arg('bag').replace('.bag', '/'))" />
+
+  <!--Topics-->
+  <!--Image compressed topic in the bag-->
+  <arg name="rgb_left_compressed_topic" default="/left_camera/image/compressed"/>
+  <!--Image compressed topic in the bag-->
+  <arg name="rgb_right_compressed_topic" default="/right_camera/image/compressed"/>
+  <!--Velodyne points topic in the bag-->
+  <arg name="pointcloud_topic" default="/livox/lidar"/>
+  <!--IMU topic in the bag-->
+  <arg name="imu_topic" default="/imu/data"/>
+  <!--IMU topic in the bag-->
+  <arg name="imu_topic_livox" default="/livox/imu"/>
+  <!-- lidar type -->
+  <arg name="lidar_type" default="Livox"/>
+
+
+  <!--Folder names-->
+  <!--Folder to save the images under the $folder directory-->
+  <arg name="rgb_left_folder" default="Camera/image_left/"/>
+  <!--Folder to save the images under the $folder directory-->
+  <arg name="rgb_right_folder" default="Camera/image_right/"/>
+  <!--Folder to save the pc data under the $folder directory-->
+  <arg name="point_folder" default="LiDAR/bin/"/>
+  <!--Folder to save the imu data under the $folder directory-->
+  <arg name="imu_folder" default="imu/"/>
+  <!--Folder to save the imu data under the $folder directory-->
+  <arg name="imu_folder_ouster" default="LiDAR/imu/"/>
+
+  <!--Time selection-->
+  <!--Start time for the extraction of data-->
+  <arg name="start_time" default="-1"/>
+  <!--End time for the extraction of data-->
+  <arg name="end_time" default="-1"/>
+
+  <!--Script to create the directories where the data is going to be saved. Its args are: -f $folder $subfolder1 $subfolder3 $subfolder2...-->
+  <node name="create_directories" type="createDirectories.sh" pkg="bag_extractor" 
+  args="-f  $(arg folder) 
+            $(arg rgb_left_folder) 
+            $(arg rgb_right_folder) 
+            $(arg point_folder) 
+            $(arg imu_folder_ouster) 
+            $(arg imu_folder)" 
+            
+            output="screen"/>
+
+  <!--Nodes to extract data from topics.-->
+  <node name="rgb_left_extractor" type="Comimg2jpg" pkg="bag_extractor" output="screen"
+  args="_folder:=$(arg folder)$(arg rgb_left_folder)
+        _topic:=$(arg rgb_left_compressed_topic)
+        _bag:=$(arg bag)
+        _start_time:=$(arg start_time)
+        _end_time:=$(arg end_time)"/>
+
+  <node name="rgb_right_extractor" type="Comimg2jpg" pkg="bag_extractor" output="screen"
+  args="_folder:=$(arg folder)$(arg rgb_right_folder)
+        _topic:=$(arg rgb_right_compressed_topic)
+        _bag:=$(arg bag)
+        _start_time:=$(arg start_time)
+        _end_time:=$(arg end_time)"/>
+
+  <node name="livox_extractor" type="livox2bin" pkg="bag_extractor" output="screen"
+  args="_folder:=$(arg folder)$(arg point_folder)
+        _topic:=$(arg pointcloud_topic)
+        _bag:=$(arg bag)
+        _lidar_type:=$(arg lidar_type)
+        _start_time:=$(arg start_time)
+        _end_time:=$(arg end_time)"/>
+
+  <node name="imu_extractor" type="imu2txt" pkg="bag_extractor" output="screen"
+  args="_folder:=$(arg folder)$(arg imu_folder)
+        _topic:=$(arg imu_topic)
+        _bag:=$(arg bag)
+        _start_time:=$(arg start_time)
+        _end_time:=$(arg end_time)"/>
+
+  <node name="imu_extractor_ouster" type="imu2txt" pkg="bag_extractor" output="screen"
+  args="_folder:=$(arg folder)$(arg imu_folder_ouster)
+        _topic:=$(arg imu_topic_livox)
+        _bag:=$(arg bag)
+        _start_time:=$(arg start_time)
+        _end_time:=$(arg end_time)"/>
+
+</launch>
