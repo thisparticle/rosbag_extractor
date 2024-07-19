@@ -1,7 +1,7 @@
 <launch>
 
   <!--Global route to the bagfile to extract-->
-  <arg name="bag" default="/home/relead/GEODE/Inland_Waterways_Short_Carol.bag"/>
+  <arg name="bag" default="/media/thisparticle/Data3/GEODE/sensor_data/Offroad/Offroad7_gamma.bag"/>
 
   <!--Folder to contain the outputs inside ~/.ros folder-->
   <!-- <arg name="folder" default="result/"/> -->
@@ -41,7 +41,7 @@
   <arg name="end_time" default="-1"/>
 
   <!--Script to create the directories where the data is going to be saved. Its args are: -f $folder $subfolder1 $subfolder3 $subfolder2...-->
-  <node name="create_directories" type="createDirectories.sh" pkg="bag_extractor" 
+  <node name="create_directories" type="createDirectories.sh" pkg="rosbag_extractor" 
   args="-f  $(arg folder) 
             $(arg rgb_left_folder) 
             $(arg rgb_right_folder) 
@@ -52,21 +52,21 @@
             output="screen"/>
 
   <!--Nodes to extract data from topics.-->
-  <node name="rgb_left_extractor" type="Comimg2jpg" pkg="bag_extractor" output="screen"
+  <node name="rgb_left_extractor" type="Comimg2jpg" pkg="rosbag_extractor" output="screen"
   args="_folder:=$(arg folder)$(arg rgb_left_folder)
         _topic:=$(arg rgb_left_compressed_topic)
         _bag:=$(arg bag)
         _start_time:=$(arg start_time)
         _end_time:=$(arg end_time)"/>
 
-  <node name="rgb_right_extractor" type="Comimg2jpg" pkg="bag_extractor" output="screen"
+  <node name="rgb_right_extractor" type="Comimg2jpg" pkg="rosbag_extractor" output="screen"
   args="_folder:=$(arg folder)$(arg rgb_right_folder)
         _topic:=$(arg rgb_right_compressed_topic)
         _bag:=$(arg bag)
         _start_time:=$(arg start_time)
         _end_time:=$(arg end_time)"/>
 
-  <node name="livox_extractor" type="livox2bin" pkg="bag_extractor" output="screen"
+  <node name="livox_extractor" type="livox2bin" pkg="rosbag_extractor" output="screen"
   args="_folder:=$(arg folder)$(arg point_folder)
         _topic:=$(arg pointcloud_topic)
         _bag:=$(arg bag)
@@ -74,14 +74,14 @@
         _start_time:=$(arg start_time)
         _end_time:=$(arg end_time)"/>
 
-  <node name="imu_extractor" type="imu2txt" pkg="bag_extractor" output="screen"
+  <node name="imu_extractor" type="imu2txt" pkg="rosbag_extractor" output="screen"
   args="_folder:=$(arg folder)$(arg imu_folder)
         _topic:=$(arg imu_topic)
         _bag:=$(arg bag)
         _start_time:=$(arg start_time)
         _end_time:=$(arg end_time)"/>
 
-  <node name="imu_extractor_ouster" type="imu2txt" pkg="bag_extractor" output="screen"
+  <node name="imu_extractor_ouster" type="imu2txt" pkg="rosbag_extractor" output="screen"
   args="_folder:=$(arg folder)$(arg imu_folder_ouster)
         _topic:=$(arg imu_topic_livox)
         _bag:=$(arg bag)
