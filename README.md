@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository is a tailored adaptation of the [dataset_bag_extractor](https://github.com/Robotics-Mechatronics-UMA/dataset_bag_extractor) and [livox_to_pointcloud2](https://github.com/koide3/livox_to_pointcloud2) projects, specifically optimized for the GEODE dataset. It provides a comprehensive package designed to extract raw data from ROS (Robot Operating System) bags, facilitating the extraction of various data types such as images, IMU data, and point clouds from Velodyne, Ouster, and Livox sensors.
+This repository is a tailored adaptation of the [dataset_bag_extractor](https://github.com/Robotics-Mechatronics-UMA/dataset_bag_extractor) and [livox_to_pointcloud2](https://github.com/koide3/livox_to_pointcloud2) projects, specifically optimized for the GEODE and [S3E](https://pengyu-team.github.io/S3E/) dataset. It provides a comprehensive package designed to extract raw data from ROS (Robot Operating System) bags, facilitating the extraction of various data types such as images, IMU data, and point clouds from Velodyne, Ouster, and Livox sensors.
 
 ### Key Features
 
